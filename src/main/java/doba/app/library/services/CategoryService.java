@@ -1,5 +1,6 @@
 package doba.app.library.services;
 
+import doba.app.library.dto.category.CreateCategoryDto;
 import doba.app.library.dto.category.UpdateCategoryDto;
 import doba.app.library.entities.CategoryEntity;
 import doba.app.library.repositories.CategoryRepository;
@@ -12,31 +13,36 @@ import java.util.UUID;
 
 @Service
 public class CategoryService {
-    private final CategoryRepository repository;
+    private final CategoryRepository categoryRepository;
 
     @Autowired
-    public CategoryService(final CategoryRepository repository) {
-        this.repository = repository;
+    public CategoryService(final CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
     }
 
+    //Get list of categories with pagination
     public List<CategoryEntity> getAllCategoryPaginated() {
-        return repository.findAll();
+        return categoryRepository.findAll();
     }
 
+    //Get one category by id
     public CategoryEntity getOneCategoryById(UUID id) throws Exception {
-        Optional<CategoryEntity> category = repository.findById(id);
+        Optional<CategoryEntity> category = categoryRepository.findById(id);
         if (category.isEmpty()) {
             throw new Exception("Category not found");
         }
         return category.get();
     }
 
-    public CategoryEntity createCategory(CategoryEntity category) {
-        return repository.save(category);
+    //Create a new category
+    public CategoryEntity createCategory(CreateCategoryDto dto) {
+        CategoryEntity category = new CategoryEntity(dto.getName());
+        return categoryRepository.save(category);
     }
 
+    //Update one category by id
     public CategoryEntity updateOneCategoryById(UUID id, UpdateCategoryDto dto) throws Exception {
-        Optional<CategoryEntity> findOneCategory = repository.findById(id);
+        Optional<CategoryEntity> findOneCategory = categoryRepository.findById(id);
         if (findOneCategory.isEmpty()) {
             throw new Exception("Category not found");
         }
@@ -44,16 +50,17 @@ public class CategoryService {
         if (dto.getName() != null) {
             category.setName(dto.getName());
         }
-        return repository.save(category);
+        return categoryRepository.save(category);
     }
 
+    //Delete one category by id
     public CategoryEntity deleteOneCategoryById(UUID id) throws Exception {
-        Optional<CategoryEntity> findOneCategory = repository.findById(id);
+        Optional<CategoryEntity> findOneCategory = categoryRepository.findById(id);
         if (findOneCategory.isEmpty()) {
             throw new Exception("Category not found");
         }
         CategoryEntity category = findOneCategory.get();
-        repository.delete(category);
+        categoryRepository.delete(category);
         return category;
     }
 }

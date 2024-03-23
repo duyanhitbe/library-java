@@ -21,27 +21,26 @@ public class CategoryController {
 
     @PostMapping("/v1/category")
     CategoryEntity createCategory(@RequestBody CreateCategoryDto dto) {
-        CategoryEntity category = new CategoryEntity(dto.getName());
-        return categoryService.createCategory(category);
+        return categoryService.createCategory(dto);
     }
 
     @GetMapping("/v1/category")
     List<CategoryEntity> getAllCategoryPaginated() {
-       return categoryService.getAllCategoryPaginated();
+        return categoryService.getAllCategoryPaginated();
     }
 
     @GetMapping("/v1/category/{id}")
-    CategoryEntity getOneCategoryById(@PathVariable("id")UUID id) throws Exception {
+    CategoryEntity getOneCategoryById(@PathVariable("id") UUID id) throws Exception {
         return categoryService.getOneCategoryById(id);
     }
 
     @PatchMapping("/v1/category/{id}")
-    CategoryEntity updateOneCategoryById(@PathVariable("id")UUID id, @RequestBody UpdateCategoryDto dto) throws Exception {
+    CategoryEntity updateOneCategoryById(@PathVariable("id") UUID id, @RequestBody UpdateCategoryDto dto) throws Exception {
         return categoryService.updateOneCategoryById(id, dto);
     }
 
     @DeleteMapping("/v1/category/{id}")
-    CategoryEntity deleteOneCategoryById(@PathVariable("id")UUID id) throws Exception {
+    CategoryEntity deleteOneCategoryById(@PathVariable("id") UUID id) throws Exception {
         return categoryService.deleteOneCategoryById(id);
     }
 }
