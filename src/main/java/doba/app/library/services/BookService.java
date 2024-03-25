@@ -1,12 +1,16 @@
 package doba.app.library.services;
 
+import doba.app.library.dto.book.BorrowBookDto;
+import doba.app.library.dto.book.BorrowBookResponse;
 import doba.app.library.dto.book.CreateBookDto;
 import doba.app.library.dto.book.UpdateBookDto;
 import doba.app.library.entities.BookEntity;
 import doba.app.library.entities.BookInfoEntity;
+import doba.app.library.entities.BorrowerEntity;
 import doba.app.library.entities.CategoryEntity;
 import doba.app.library.repositories.BookInfoRepository;
 import doba.app.library.repositories.BookRepository;
+import doba.app.library.repositories.BorrowerRepository;
 import doba.app.library.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,16 +24,19 @@ public class BookService {
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
     private final BookInfoRepository bookInfoRepository;
+    private final BorrowerRepository borrowerRepository;
 
     @Autowired
     public BookService(
             final BookRepository bookRepository,
             final CategoryRepository categoryRepository,
-            final BookInfoRepository bookInfoRepository
+            final BookInfoRepository bookInfoRepository,
+            final BorrowerRepository borrowerRepository
     ) {
         this.bookRepository = bookRepository;
         this.categoryRepository = categoryRepository;
         this.bookInfoRepository = bookInfoRepository;
+        this.borrowerRepository = borrowerRepository;
     }
 
     //Get list of books with pagination
@@ -89,5 +96,37 @@ public class BookService {
         BookEntity book = this.getOneBookById(id);
         bookRepository.delete(book);
         return book;
+    }
+
+    //Borrow a book
+    public BorrowBookResponse borrowBook(BorrowBookDto dto) throws Exception {
+        BorrowBookResponse response = new BorrowBookResponse();
+
+        BookEntity book = this.getOneBookById(dto.getBookId());
+        List<BorrowerEntity> borrowers = book.getBorrowers();
+        BorrowerEntity borrower = borrowerRepository.findByPhone(dto.getPhone()).orElse(null);
+        if (borrower == null) {
+            borrower = new BorrowerEntity(dto.getName(), dto.getPhone(), dto.getAddress());
+        } else {
+            borrower.setName(dto.getName());
+            borrower.setPhone(dto.getPhone());
+            borrower.setAddress(dto.getAddress());
+        }
+
+        borrowerRepository.save(borrower);
+        borrowers.add(borrower);
+        bookRepository.save(book);
+
+        response.setBook(book);
+        response.setBorrower(borrower);
+        return response;
+    }
+
+    public List<BookEntity> getAllBookPaginatedByBorrowerId(UUID borrowerId) throws Exception {
+        BorrowerEntity borrower = borrowerRepository.findById(borrowerId).orElse(null);
+        if (borrower == null) {
+            throw new Exception("Borrower not found");
+        }
+        return borrower.getBooks();
     }
 }

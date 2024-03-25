@@ -13,8 +13,6 @@ import org.hibernate.annotations.SQLRestriction;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Entity
 @Table(name = "categories")
 @SQLDelete(sql = "UPDATE categories SET deleted_at = NOW() WHERE id=?")

@@ -1,0 +1,26 @@
+package doba.app.library.controllers;
+
+import doba.app.library.entities.BorrowerEntity;
+import doba.app.library.services.BorrowerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+public class BorrowerController {
+    final BorrowerService borrowerService;
+
+    @Autowired
+    public BorrowerController(final BorrowerService borrowerService) {
+        this.borrowerService = borrowerService;
+    }
+
+    @GetMapping("/v1/borrower/book/{bookId}")
+    List<BorrowerEntity> getAllBookPaginatedByBorrowerId(@PathVariable("bookId") UUID bookId) throws Exception {
+        return borrowerService.getAllBorrowerPaginatedByBookId(bookId);
+    }
+}

@@ -1,5 +1,7 @@
 package doba.app.library.controllers;
 
+import doba.app.library.dto.book.BorrowBookDto;
+import doba.app.library.dto.book.BorrowBookResponse;
 import doba.app.library.dto.book.CreateBookDto;
 import doba.app.library.dto.book.UpdateBookDto;
 import doba.app.library.entities.BookEntity;
@@ -42,5 +44,15 @@ public class BookController {
     @DeleteMapping("/v1/book/{id}")
     BookEntity deleteOneBookById(@PathVariable("id") UUID id) throws Exception {
         return bookService.deleteOneBookById(id);
+    }
+
+    @PostMapping("/v1/book/borrow")
+    BorrowBookResponse borrowBook(@RequestBody BorrowBookDto dto) throws Exception {
+        return bookService.borrowBook(dto);
+    }
+
+    @GetMapping("/v1/book/borrow/{borrowerId}")
+    List<BookEntity> getAllBookPaginatedByBorrowerId(@PathVariable("borrowerId") UUID borrowerId) throws Exception {
+        return bookService.getAllBookPaginatedByBorrowerId(borrowerId);
     }
 }

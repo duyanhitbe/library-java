@@ -14,8 +14,6 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Entity
 @Table(name = "book_infos")
 @SQLDelete(sql = "UPDATE book_infos SET deleted_at = NOW() WHERE id=?")

@@ -3,18 +3,17 @@ package doba.app.library.dto.book;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import doba.app.library.validations.NullOrNotEmpty;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.Date;
 import java.util.UUID;
 
-
+@Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class UpdateBookDto {
     @NullOrNotEmpty(message = "category_id is required")
     @JsonProperty("category_id")
