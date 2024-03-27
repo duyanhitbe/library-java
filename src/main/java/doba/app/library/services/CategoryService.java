@@ -4,21 +4,16 @@ import doba.app.library.dto.category.CreateCategoryDto;
 import doba.app.library.dto.category.UpdateCategoryDto;
 import doba.app.library.entities.CategoryEntity;
 import doba.app.library.repositories.CategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-
-    @Autowired
-    public CategoryService(final CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 
     //Get list of categories with pagination
     public List<CategoryEntity> getAllCategoryPaginated() {
@@ -27,39 +22,36 @@ public class CategoryService {
 
     //Get one category by id
     public CategoryEntity getOneCategoryById(UUID id) throws Exception {
-        Optional<CategoryEntity> category = categoryRepository.findById(id);
-        if (category.isEmpty()) {
-            throw new Exception("Category not found");
-        }
-        return category.get();
+        return categoryRepository
+                .findById(id)
+                .orElseThrow(() -> new Exception("Category not found"));
     }
 
     //Create a new category
     public CategoryEntity createCategory(CreateCategoryDto dto) {
-        CategoryEntity category = new CategoryEntity(dto.getName());
+        CategoryEntity category = CategoryEntity
+                .builder()
+                .name(dto.getName())
+                .build();
         return categoryRepository.save(category);
     }
 
     //Update one category by id
     public CategoryEntity updateOneCategoryById(UUID id, UpdateCategoryDto dto) throws Exception {
-        Optional<CategoryEntity> findOneCategory = categoryRepository.findById(id);
-        if (findOneCategory.isEmpty()) {
-            throw new Exception("Category not found");
-        }
-        CategoryEntity category = findOneCategory.get();
-        if (dto.getName() != null) {
-            category.setName(dto.getName());
-        }
+        CategoryEntity category = this.getOneCategoryById(id);
+
+        String name = dto.getName();
+
+        String updatedName = name != null ? name : category.getName();
+
+        category.setName(updatedName);
+
         return categoryRepository.save(category);
     }
 
     //Delete one category by id
     public CategoryEntity deleteOneCategoryById(UUID id) throws Exception {
-        Optional<CategoryEntity> findOneCategory = categoryRepository.findById(id);
-        if (findOneCategory.isEmpty()) {
-            throw new Exception("Category not found");
-        }
-        CategoryEntity category = findOneCategory.get();
+        CategoryEntity category = this.getOneCategoryById(id);
         categoryRepository.delete(category);
         return category;
     }

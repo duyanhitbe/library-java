@@ -4,42 +4,39 @@ import doba.app.library.dto.category.CreateCategoryDto;
 import doba.app.library.dto.category.UpdateCategoryDto;
 import doba.app.library.entities.CategoryEntity;
 import doba.app.library.services.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
+@RequestMapping("/v1/category")
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @Autowired
-    public CategoryController(final CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
-
-    @PostMapping("/v1/category")
+    @PostMapping("/")
     CategoryEntity createCategory(@RequestBody CreateCategoryDto dto) {
         return categoryService.createCategory(dto);
     }
 
-    @GetMapping("/v1/category")
+    @GetMapping("/")
     List<CategoryEntity> getAllCategoryPaginated() {
         return categoryService.getAllCategoryPaginated();
     }
 
-    @GetMapping("/v1/category/{id}")
+    @GetMapping("/{id}")
     CategoryEntity getOneCategoryById(@PathVariable("id") UUID id) throws Exception {
         return categoryService.getOneCategoryById(id);
     }
 
-    @PatchMapping("/v1/category/{id}")
+    @PatchMapping("/{id}")
     CategoryEntity updateOneCategoryById(@PathVariable("id") UUID id, @RequestBody UpdateCategoryDto dto) throws Exception {
         return categoryService.updateOneCategoryById(id, dto);
     }
 
-    @DeleteMapping("/v1/category/{id}")
+    @DeleteMapping("/{id}")
     CategoryEntity deleteOneCategoryById(@PathVariable("id") UUID id) throws Exception {
         return categoryService.deleteOneCategoryById(id);
     }

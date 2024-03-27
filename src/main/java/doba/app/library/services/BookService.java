@@ -12,7 +12,7 @@ import doba.app.library.repositories.BookInfoRepository;
 import doba.app.library.repositories.BookRepository;
 import doba.app.library.repositories.BorrowerRepository;
 import doba.app.library.repositories.CategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,24 +20,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
     private final BookInfoRepository bookInfoRepository;
     private final BorrowerRepository borrowerRepository;
-
-    @Autowired
-    public BookService(
-            final BookRepository bookRepository,
-            final CategoryRepository categoryRepository,
-            final BookInfoRepository bookInfoRepository,
-            final BorrowerRepository borrowerRepository
-    ) {
-        this.bookRepository = bookRepository;
-        this.categoryRepository = categoryRepository;
-        this.bookInfoRepository = bookInfoRepository;
-        this.borrowerRepository = borrowerRepository;
-    }
 
     //Get list of books with pagination
     public List<BookEntity> getAllBookPaginated() {
@@ -46,22 +34,27 @@ public class BookService {
 
     //Get one book by id
     public BookEntity getOneBookById(UUID id) throws Exception {
-        BookEntity book = bookRepository.findById(id).orElse(null);
-        if (book == null) {
-            throw new Exception("Book not found");
-        }
-        return book;
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new Exception("Book not found"));
     }
 
     //Create a new book
     public BookEntity createBook(CreateBookDto dto) throws Exception {
-        CategoryEntity category = categoryRepository.findById(dto.getCategoryId()).orElse(null);
-        if (category == null) {
-            throw new Exception("Category not found");
-        }
-        BookInfoEntity bookInfo = new BookInfoEntity(dto.getName(), dto.getAuthor(), dto.getPublicationDate());
+        CategoryEntity category = categoryRepository
+                .findById(dto.getCategoryId())
+                .orElseThrow(() -> new Exception("Category not found"));
+        BookInfoEntity bookInfo = BookInfoEntity
+                .builder()
+                .name(dto.getName())
+                .author(dto.getAuthor())
+                .publicationDate(dto.getPublicationDate())
+                .build();
         BookInfoEntity newBookInfo = bookInfoRepository.save(bookInfo);
-        BookEntity book = new BookEntity(category.getId(), newBookInfo.getId());
+        BookEntity book = BookEntity
+                .builder()
+                .categoryId(category.getId())
+                .bookInfoId(newBookInfo.getId())
+                .build();
         return bookRepository.save(book);
     }
 
@@ -71,21 +64,19 @@ public class BookService {
         BookInfoEntity bookInfo = book.getBookInfo();
 
         UUID categoryId = dto.getCategoryId();
-        if (categoryId != null) {
-            book.setCategoryId(categoryId);
-        }
         String name = dto.getName();
-        if (name != null) {
-            bookInfo.setName(name);
-        }
         String author = dto.getAuthor();
-        if (author != null) {
-            bookInfo.setAuthor(author);
-        }
         Date publicationDate = dto.getPublicationDate();
-        if (publicationDate != null) {
-            bookInfo.setPublicationDate(publicationDate);
-        }
+
+        UUID updatedCategoryId = categoryId != null ? categoryId : book.getCategoryId();
+        String updatedName = name != null ? name : bookInfo.getName();
+        String updatedAuthor = author != null ? author : bookInfo.getAuthor();
+        Date updatedPublicationDate = publicationDate != null ? publicationDate : bookInfo.getPublicationDate();
+
+        book.setCategoryId(updatedCategoryId);
+        bookInfo.setName(updatedName);
+        bookInfo.setAuthor(updatedAuthor);
+        bookInfo.setPublicationDate(updatedPublicationDate);
 
         bookInfoRepository.save(bookInfo);
         return bookRepository.save(book);
@@ -100,10 +91,8 @@ public class BookService {
 
     //Borrow a book
     public BorrowBookResponse borrowBook(BorrowBookDto dto) throws Exception {
-        BorrowBookResponse response = new BorrowBookResponse();
-
         BookEntity book = this.getOneBookById(dto.getBookId());
-        List<BorrowerEntity> borrowers = book.getBorrowers();
+
         BorrowerEntity borrower = borrowerRepository.findByPhone(dto.getPhone()).orElse(null);
         if (borrower == null) {
             borrower = new BorrowerEntity(dto.getName(), dto.getPhone(), dto.getAddress());
@@ -112,21 +101,22 @@ public class BookService {
             borrower.setPhone(dto.getPhone());
             borrower.setAddress(dto.getAddress());
         }
-
         borrowerRepository.save(borrower);
-        borrowers.add(borrower);
+
+        book.getBorrowers().add(borrower);
         bookRepository.save(book);
 
-        response.setBook(book);
-        response.setBorrower(borrower);
-        return response;
+        return BorrowBookResponse
+                .builder()
+                .book(book)
+                .borrower(borrower)
+                .build();
     }
 
     public List<BookEntity> getAllBookPaginatedByBorrowerId(UUID borrowerId) throws Exception {
-        BorrowerEntity borrower = borrowerRepository.findById(borrowerId).orElse(null);
-        if (borrower == null) {
-            throw new Exception("Borrower not found");
-        }
-        return borrower.getBooks();
+        return borrowerRepository
+                .findById(borrowerId)
+                .orElseThrow(() -> new Exception("Borrower not found"))
+                .getBooks();
     }
 }

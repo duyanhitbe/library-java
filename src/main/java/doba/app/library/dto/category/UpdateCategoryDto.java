@@ -2,15 +2,15 @@ package doba.app.library.dto.category;
 
 import doba.app.library.validations.NullOrNotEmpty;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 
+@Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class UpdateCategoryDto {
     @NullOrNotEmpty(message = "name is required")
     private String name;

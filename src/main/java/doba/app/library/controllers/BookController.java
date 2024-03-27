@@ -6,52 +6,49 @@ import doba.app.library.dto.book.CreateBookDto;
 import doba.app.library.dto.book.UpdateBookDto;
 import doba.app.library.entities.BookEntity;
 import doba.app.library.services.BookService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
+@RequestMapping("/v1/book")
 public class BookController {
     private final BookService bookService;
 
-    @Autowired
-    public BookController(final BookService bookService) {
-        this.bookService = bookService;
-    }
-
-    @PostMapping("/v1/book")
+    @PostMapping("/")
     BookEntity createBook(@RequestBody CreateBookDto dto) throws Exception {
         return bookService.createBook(dto);
     }
 
-    @GetMapping("/v1/book")
+    @GetMapping("/")
     List<BookEntity> getAllBookPaginated() {
         return bookService.getAllBookPaginated();
     }
 
-    @GetMapping("/v1/book/{id}")
+    @GetMapping("/{id}")
     BookEntity getOneBookById(@PathVariable("id") UUID id) throws Exception {
         return bookService.getOneBookById(id);
     }
 
-    @PatchMapping("/v1/book/{id}")
+    @PatchMapping("/{id}")
     BookEntity updateOneBookById(@PathVariable("id") UUID id, @RequestBody UpdateBookDto dto) throws Exception {
         return bookService.updateOneBookById(id, dto);
     }
 
-    @DeleteMapping("/v1/book/{id}")
+    @DeleteMapping("/{id}")
     BookEntity deleteOneBookById(@PathVariable("id") UUID id) throws Exception {
         return bookService.deleteOneBookById(id);
     }
 
-    @PostMapping("/v1/book/borrow")
+    @PostMapping("/borrow")
     BorrowBookResponse borrowBook(@RequestBody BorrowBookDto dto) throws Exception {
         return bookService.borrowBook(dto);
     }
 
-    @GetMapping("/v1/book/borrow/{borrowerId}")
+    @GetMapping("/borrow/{borrowerId}")
     List<BookEntity> getAllBookPaginatedByBorrowerId(@PathVariable("borrowerId") UUID borrowerId) throws Exception {
         return bookService.getAllBookPaginatedByBorrowerId(borrowerId);
     }
