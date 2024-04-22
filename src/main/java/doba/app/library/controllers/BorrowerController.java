@@ -13,11 +13,10 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/borrower")
 public class BorrowerController {
     final BorrowerService borrowerService;
 
-    @GetMapping("/book/{bookId}")
+    @GetMapping("/v1/borrower/book/{bookId}")
     List<BorrowerEntity> getAllBookPaginatedByBorrowerId(@PathVariable("bookId") UUID bookId) throws Exception {
         return borrowerService.getAllBorrowerPaginatedByBookId(bookId);
     }

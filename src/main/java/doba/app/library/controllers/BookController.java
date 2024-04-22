@@ -14,41 +14,40 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/book")
 public class BookController {
     private final BookService bookService;
 
-    @PostMapping("/")
+    @PostMapping("/v1/book")
     BookEntity createBook(@RequestBody CreateBookDto dto) throws Exception {
         return bookService.createBook(dto);
     }
 
-    @GetMapping("/")
+    @GetMapping("/v1/book")
     List<BookEntity> getAllBookPaginated() {
         return bookService.getAllBookPaginated();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/v1/book/{id}")
     BookEntity getOneBookById(@PathVariable("id") UUID id) throws Exception {
         return bookService.getOneBookById(id);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/v1/book/{id}")
     BookEntity updateOneBookById(@PathVariable("id") UUID id, @RequestBody UpdateBookDto dto) throws Exception {
         return bookService.updateOneBookById(id, dto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/v1/book/{id}")
     BookEntity deleteOneBookById(@PathVariable("id") UUID id) throws Exception {
         return bookService.deleteOneBookById(id);
     }
 
-    @PostMapping("/borrow")
+    @PostMapping("/v1/book/borrow")
     BorrowBookResponse borrowBook(@RequestBody BorrowBookDto dto) throws Exception {
         return bookService.borrowBook(dto);
     }
 
-    @GetMapping("/borrow/{borrowerId}")
+    @GetMapping("/v1/book/borrow/{borrowerId}")
     List<BookEntity> getAllBookPaginatedByBorrowerId(@PathVariable("borrowerId") UUID borrowerId) throws Exception {
         return bookService.getAllBookPaginatedByBorrowerId(borrowerId);
     }

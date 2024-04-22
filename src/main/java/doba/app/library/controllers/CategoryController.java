@@ -12,31 +12,30 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/category")
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @PostMapping("/")
+    @PostMapping("/v1/category")
     CategoryEntity createCategory(@RequestBody CreateCategoryDto dto) {
         return categoryService.createCategory(dto);
     }
 
-    @GetMapping("/")
+    @GetMapping("/v1/category")
     List<CategoryEntity> getAllCategoryPaginated() {
         return categoryService.getAllCategoryPaginated();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/v1/category/{id}")
     CategoryEntity getOneCategoryById(@PathVariable("id") UUID id) throws Exception {
         return categoryService.getOneCategoryById(id);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/v1/category/{id}")
     CategoryEntity updateOneCategoryById(@PathVariable("id") UUID id, @RequestBody UpdateCategoryDto dto) throws Exception {
         return categoryService.updateOneCategoryById(id, dto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/v1/category/{id}")
     CategoryEntity deleteOneCategoryById(@PathVariable("id") UUID id) throws Exception {
         return categoryService.deleteOneCategoryById(id);
     }

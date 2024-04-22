@@ -12,31 +12,30 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("v1/user")
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/")
+    @PostMapping("/v1/user")
     UserEntity createUser(@RequestBody CreateUserDto dto) {
         return userService.createUser(dto);
     }
 
-    @GetMapping("/")
+    @GetMapping("/v1/user")
     List<UserEntity> getAllUserPaginated() {
         return userService.getAllUserPaginated();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/v1/user/{id}")
     UserEntity getOneUserById(@PathVariable("id") UUID id) throws Exception {
         return userService.getOneUserById(id);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/v1/user/{id}")
     UserEntity updateOneUserById(@PathVariable("id") UUID id, @RequestBody UpdateUserDto dto) throws Exception {
         return userService.updateOneUserById(id, dto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/v1/user/{id}")
     UserEntity deleteOneUserById(@PathVariable("id") UUID id) throws Exception {
         return userService.deleteOneUserById(id);
     }
