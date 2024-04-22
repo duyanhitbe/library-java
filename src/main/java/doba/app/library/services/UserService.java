@@ -6,6 +6,7 @@ import doba.app.library.entities.UserEntity;
 import doba.app.library.enums.UserRole;
 import doba.app.library.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     //Get list of categories with pagination
     public List<UserEntity> getAllUserPaginated() {
@@ -33,7 +35,7 @@ public class UserService {
         UserEntity user = UserEntity
                 .builder()
                 .username(dto.getUsername())
-                .password(dto.getPassword())
+                .password(passwordEncoder.encode(dto.getPassword()))
                 .role(dto.getRole())
                 .build();
         return userRepository.save(user);

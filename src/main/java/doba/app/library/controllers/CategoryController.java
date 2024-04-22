@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/category")
+@RequestMapping("v1/category")
 public class CategoryController {
     private final CategoryService categoryService;
 

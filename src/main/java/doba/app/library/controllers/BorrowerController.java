@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/borrower")
+@RequestMapping("v1/borrower")
 public class BorrowerController {
     final BorrowerService borrowerService;
 
